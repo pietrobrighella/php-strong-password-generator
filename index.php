@@ -1,52 +1,17 @@
 <?php
+session_start();
+include __DIR__ . '/function.php';
 
-/*
-Milestone 1
-1.Creare un form che invii in GET la lunghezza della password.
-2.Una nostra funzione utilizzerà questo dato per generare una password casuale (composta da lettere, lettere maiuscole, numeri e simboli) da restituire all’utente.
-3.Scriviamo tutto (logica e layout) in un unico file index.php
-Milestone 2
-Verificato il corretto funzionamento del nostro codice, spostiamo la logica in un file functions.php che includeremo poi nella pagina principale
-Milestone 3
-Invece di visualizzare la password nella index, effettuare un redirect ad una pagina dedicata che tramite $_SESSION recupererà la password da mostrare all’utente.
-Milestone 4 (BONUS)
-Gestire ulteriori parametri per la password: quali caratteri usare fra numeri, lettere e simboli. Possono essere scelti singolarmente (es. solo numeri) oppure possono essere combinati fra loro (es. numeri e simboli, oppure tutti e tre insieme).
-Dare all’utente anche la possibilità di permettere o meno la ripetizione di caratteri uguali.
-*/
-
-if (isset($_GET['number'])) {
+if (isset($_GET['number']) && $_GET['number'] > 5 && $_GET['number'] <= 25) {
     $number = $_GET['number'];
+    $password = genPsw($number);
+    $_SESSION['password'] = $password;
+    header('Location: ./password.php');
 }
-function genPsw($number)
-{
-
-    $alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
-    $num = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
-    $special = ['!', '?', '$', '?', '%', '^', '&', '*', '(', ')', '_', '-', '+', '=', '{', '[', '}', ']', ':', ';', '@', '#', '|', '<', ',', '>', '.', '?', '/',];
-
-    $psw = [];
-
-    while (sizeof($psw) < $number) {
-        $sort = rand(1, 3);
-        if ($sort === 1) {
-            $provv = array_rand($alphabet, 1);
-            $psw[] = $alphabet[$provv];
-        } elseif ($sort === 2) {
-            $provv = array_rand($num, 1);
-            $psw[] = $num[$provv];
-        } else {
-            $provv = array_rand($special, 1);
-            $psw[] = $special[$provv];
-        }
-    }
-
-    return $psw;
-}
-
-var_dump(genPsw(10))
+// var_dump($_SESSION);
 
 
-    ?>
+?>
 
 <!DOCTYPE html>
 <html lang="it">
@@ -64,11 +29,20 @@ var_dump(genPsw(10))
 </head>
 
 <body>
-    <form action="index.php" method="get" name="pswgenerator">
-        <input type="number" id="number" name="number">
-        <button type="submit">Invia</button>
-        <button type="reset">Reset</button>
-    </form>
+    <div class="container-fluid vh-100 text-center d-flex flex-column justify-content-center">
+        <div class="pb-3">
+            <h2>Strong Password Generator</h2>
+        </div>
+        <div>
+            <form action="index.php" method="get" name="pswgenerator"
+                class="d-flex align-items-center justify-content-center gap-3">
+                <input type="number" id="number" name="number" min="5" max="25" class="form-control w-25"
+                    placeholder="Inserisci un numero da 5 a 25">
+                <button type="submit" class="btn btn-success">Genera password</button>
+                <button type="reset" class="btn btn-outline-danger">Reset</button>
+            </form>
+        </div>
+    </div>
 </body>
 
 </html>
